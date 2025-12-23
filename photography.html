@@ -11,6 +11,18 @@
     font-family: Arial, sans-serif;
     background: #020617;
     color: #e5e7eb;
+    overflow-x: hidden;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  header, .gallery {
+    position: relative;
+    z-index: 1;
   }
 
   header {
@@ -24,8 +36,6 @@
   }
 
   .back {
-    display: inline-block;
-    margin-top: 10px;
     color: #38bdf8;
     text-decoration: none;
   }
@@ -42,17 +52,36 @@
     height: 100%;
     object-fit: cover;
     border-radius: 15px;
-    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    transition: transform 0.3s;
   }
 
   .gallery img:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 15px;
   }
 </style>
 </head>
 
 <body>
+
+<canvas id="stars"></canvas>
 
 <header>
   <h1>Photography Collection</h1>
@@ -60,14 +89,67 @@
 </header>
 
 <section class="gallery">
-  <!-- Replace src with your own images -->
-  <img src="images/1.jpg">
-  <img src="https://picsum.photos/500/500?2" alt="photo">
-  <img src="https://picsum.photos/500/700?3" alt="photo">
-  <img src="https://picsum.photos/500/550?4" alt="photo">
-  <img src="https://picsum.photos/500/650?5" alt="photo">
-  <img src="https://picsum.photos/500/600?6" alt="photo">
+  <!-- replace with your own images -->
+  <img src="https://picsum.photos/600/800?1">
+  <img src="https://picsum.photos/700/600?2">
+  <img src="https://picsum.photos/650/750?3">
+  <img src="https://picsum.photos/600/700?4">
+  <img src="https://picsum.photos/700/800?5">
 </section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg">
+</div>
+
+<script>
+/* ⭐ Stars background */
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+const stars = Array.from({length: 150}, () => ({
+  x: Math.random() * innerWidth,
+  y: Math.random() * innerHeight,
+  r: Math.random() * 2,
+  s: Math.random() * 0.5 + 0.2
+}));
+
+function animateStars() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "#fff";
+  stars.forEach(star => {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.r, 0, Math.PI*2);
+    ctx.fill();
+    star.y -= star.s;
+    if (star.y < 0) star.y = canvas.height;
+  });
+  requestAnimationFrame(animateStars);
+}
+animateStars();
+
+/* 🔍 Lightbox */
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+
+document.querySelectorAll(".gallery img").forEach(img => {
+  img.onclick = () => {
+    lightboxImg.src = img.src;
+    lightbox.style.display = "flex";
+  };
+});
+
+lightbox.onclick = () => {
+  lightbox.style.display = "none";
+};
+</script>
 
 </body>
 </html>
