@@ -122,6 +122,28 @@
   text-align: center;
 }
 
+.filters {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.filters button {
+  background: #1e293b;
+  color: #e5e7eb;
+  border: none;
+  padding: 8px 16px;
+  margin: 5px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.filters button.active,
+.filters button:hover {
+  background: #38bdf8;
+  color: #020617;
+}
+
+
 </style>
 </head>
 
@@ -133,14 +155,20 @@
   <h1>Photography Collection</h1>
   <a class="back" href="portfolio.html">← Back to Portfolio</a>
 </header>
+<div class="filters">
+  <button data-filter="all" class="active">All</button>
+  <button data-filter="nature">Nature</button>
+  <button data-filter="city">City</button>
+  <button data-filter="night">Night</button>
+</div>
 
 <section class="gallery">
   <!-- replace with your own images -->
-  <img src="https://picsum.photos/600/800?1">
-  <img src="https://picsum.photos/700/600?2">
-  <img src="https://picsum.photos/650/750?3">
-  <img src="https://picsum.photos/600/700?4">
-  <img src="https://picsum.photos/700/800?5">
+  <img src="https://picsum.photos/600/800?1" data-category="nature">
+  <img src="https://picsum.photos/700/600?2" data-category="city">
+  <img src="https://picsum.photos/650/750?3" data-category="night">
+  <img src="https://picsum.photos/600/700?4" data-category="sun">
+  <img src="https://picsum.photos/700/800?5" data-category="morning">
 </section>
 
 <!-- Lightbox -->
@@ -228,6 +256,26 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") showImage(currentIndex + 1);
   if (e.key === "ArrowLeft") showImage(currentIndex - 1);
 });
+
+const filterButtons = document.querySelectorAll(".filters button");
+const photos = document.querySelectorAll(".gallery img");
+
+filterButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    filterButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const category = btn.dataset.filter;
+
+    photos.forEach(photo => {
+      photo.style.display =
+        category === "all" || photo.dataset.category === category
+        ? "block"
+        : "none";
+    });
+  });
+});
+
 
 </script>
 
